@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <style>
+        .slider{
+            margin-left: 300px;
+            cursor: pointer ;
+            margin-top: 50px;
+        }
+        .slider .point .slider-label{
+            display: none;
+        }
+        .slider .point:hover .slider-label{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="slider"></div>
+<script>
+    $(document).ready(function () {
+        var eSlider = $('.slider');
+        var eFill = $('<div class="fill"></div>');
+        var ePoint = $('<div class="point"></div>');
+        var eLine = $('<div class="line"></div>');
+        var eLabel = $('<span class="slider-label">123</span>');
+        eLine.append(eFill);
+        ePoint.append(eLabel);
+        eSlider.append(eLine);
+        eSlider.append(ePoint);
+
+        eSlider.css('height','20px');
+        eSlider.css('width','500px');
+//        eSlider.css('background','red');
+        eSlider.css('position','relative');
+
+        eLine.css('height','5px');
+        eLine.css('width','100%');
+        eLine.css('position','absolute');
+        eLine.css('background','green');
+        eLine.css('top',(eSlider.height()-eLine.height())/2);
+
+        eFill.css('height','100%');
+        eFill.css('background','black');
+        eFill.css('width','0%');
+
+        ePoint.css('background','blue');
+        ePoint.css('height','20px');
+        ePoint.css('width','20px');
+        ePoint.css('border-radius','50%');
+        ePoint.css('cursor','pointer');
+        ePoint.css('position','absolute');
+        ePoint.css('top',(eSlider.height()-ePoint.height())/2);
+
+
+        eLabel.css('height','20px');
+        eLabel.css('width','50px');
+        eLabel.css('background','red');
+        eLabel.css('position','absolute');
+        eLabel.css('left',ePoint.width()/2 - (eLabel.width()/2));
+        eLabel.css('background','yellow');
+        eLabel.css('top',-eLabel.height());
+        eLabel.css('color','black');
+        eLabel.css('text-align','center');
+        eLabel.css('line-height','20px');
+
+
+        var min = - ePoint.width()/2;
+        var max = eSlider.width() - ePoint.width()/2;
+        function change(x) {
+            var value =x - ePoint.width()/2;
+            ePoint.css('left',value);
+            eFill.css('width',value*100/max+'%');
+            onChangeLabel(value+ePoint.width()/2);
+        }
+        function onChangeLabel(x) {
+            eLabel.text(x);
+        }
+        function onStop(x) {
+            eLabel.text(x);
+        }
+        ePoint.draggable({
+            axis: "x",
+            create: function( event, ui ) {
+            },
+            start: function() {
+            },
+            drag: function(e,ui) {
+                ui.position.left = Math.min(max, ui.position.left);
+                ui.position.left = Math.max(min, ui.position.left);
+                eFill.css('width',ui.position.left*100/max+'%');
+                onChangeLabel(ui.position.left+ePoint.width()/2);
+            },
+            stop: function(e,ui) {
+                onStop(ui.position.left+ePoint.width()/2);
+            }
+        });
+        eSlider.click(function(e){
+            var x = e.pageX - this.offsetLeft;
+            change(x);
+        });
+        var counter = 0;
+        setInterval(function () {
+            change(counter++);
+        },100);
+
+    });
+</script>
+</body>
+</html>
